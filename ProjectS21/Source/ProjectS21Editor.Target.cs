@@ -10,6 +10,6 @@ public class ProjectS21EditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.AddRange( new string[] { "ProjectS21" } );
-		ExtraModuleNames.AddRange(new string[] { "ProjectS21Editor" });
+		ExtraModuleNames.Add( "TrackEditor" );
 	}
 }

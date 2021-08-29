@@ -2,4 +2,4 @@
 
 #include "Logging.h"
 
-DEFINE_LOG_CATEGORY(ProjectS21Editor);
+DEFINE_LOG_CATEGORY(TrackEditor);

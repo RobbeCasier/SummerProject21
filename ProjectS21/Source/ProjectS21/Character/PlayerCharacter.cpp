@@ -3,6 +3,8 @@
 
 #include "PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "UObject/ConstructorHelpers.h"
+//#include "Components/InputComponent.h"
 #include <Runtime\Engine\Classes\Kismet\KismetMathLibrary.h>
 
 // Sets default values
@@ -32,10 +34,6 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	USkeletalMeshComponent* skeletalMesh = GetMesh();
-	skeletalMesh->SetSkeletalMesh(LoadObject<USkeletalMesh>(nullptr, TEXT("/Game/Mannequin/Character/Mesh/SK_Mannequin")));
-	skeletalMesh->SetRelativeRotation({ 0, -90, 0 });
 }
 
 // Called every frame

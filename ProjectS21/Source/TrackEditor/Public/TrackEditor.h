@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
 
-class FProjectS21Editor : public IModuleInterface
+class FTrackEditor : public IModuleInterface
 {
 public:
 

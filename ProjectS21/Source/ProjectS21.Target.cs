@@ -10,6 +10,5 @@ public class ProjectS21Target : TargetRules
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		ExtraModuleNames.AddRange( new string[] { "ProjectS21" } );
-		//ExtraModuleNames.AddRange( new string[] { "ProjectS21Editor" } );
 	}
 }

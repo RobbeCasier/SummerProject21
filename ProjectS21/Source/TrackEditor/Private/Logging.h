@@ -4,4 +4,4 @@
 
 #include "CoreMinimal.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(ProjectS21Editor, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(TrackEditor, Log, All);

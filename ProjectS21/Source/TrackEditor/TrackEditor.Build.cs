@@ -3,9 +3,9 @@
 using System.IO;
 using UnrealBuildTool;
 
-public class ProjectS21Editor : ModuleRules
+public class TrackEditor : ModuleRules
 {
-	public ProjectS21Editor(ReadOnlyTargetRules Target) : base(Target)
+	public TrackEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -28,7 +28,20 @@ public class ProjectS21Editor : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core"
+				"Core",
+				"Engine",
+				"CoreUObject",
+				"InputCore",
+				"LevelEditor",
+				"Slate",
+				"EditorStyle",
+				"AssetTools",
+				"EditorWidgets",
+				"UnrealEd",
+				"BlueprintGraph",
+				"AnimGraph",
+				"ComponentVisualizers",
+				"ProjectS21"
 			}
 			);
 			
@@ -38,7 +51,16 @@ public class ProjectS21Editor : ModuleRules
 			{
 				"Core",
 				"CoreUObject",
-				"Engine"
+				"Engine",
+				"AppFramework",
+				"SlateCore",
+				"AnimGraph",
+				"UnrealEd",
+				"KismetWidgets",
+				"MainFrame",
+				"PropertyEditor",
+				"ComponentVisualizers",
+				"ProjectS21"
 			}
 			);
 		
