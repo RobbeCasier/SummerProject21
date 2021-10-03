@@ -16,8 +16,6 @@ FTrackEditorEdModeToolkit::FTrackEditorEdModeToolkit()
 
 void FTrackEditorEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkitHost)
 {
-	const float factor = 200.f;
-
 	SAssignNew(ToolkitWidget, SBorder)
 		.HAlign(HAlign_Center)
 		.Padding(25)
@@ -54,7 +52,7 @@ void FTrackEditorEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkit
 				[
 					SNew(SButton)
 					.Text(FText::FromString("Add +X"))
-					.OnClicked(this, &FTrackEditorEdModeToolkit::OnAddPoint, FVector( factor, 0, 0 ))
+					.OnClicked(this, &FTrackEditorEdModeToolkit::OnAddPoint, FVector( 1, 0, 0 ))
 					.IsEnabled(this, &FTrackEditorEdModeToolkit::CanAddpoint)
 				]
 			+ SVerticalBox::Slot()
@@ -67,7 +65,7 @@ void FTrackEditorEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkit
 					[
 						SNew(SButton)
 						.Text(FText::FromString("Add -Y"))
-				.OnClicked(this, &FTrackEditorEdModeToolkit::OnAddPoint, FVector(0, -factor, 0))
+				.OnClicked(this, &FTrackEditorEdModeToolkit::OnAddPoint, FVector(0, -1, 0))
 				.IsEnabled(this, &FTrackEditorEdModeToolkit::CanAddpoint)
 					]
 					+ SHorizontalBox::Slot()
@@ -75,7 +73,7 @@ void FTrackEditorEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkit
 						[
 							SNew(SButton)
 							.Text(FText::FromString("Add +Y"))
-						.OnClicked(this, &FTrackEditorEdModeToolkit::OnAddPoint, FVector(0, factor, 0))
+						.OnClicked(this, &FTrackEditorEdModeToolkit::OnAddPoint, FVector(0, 1, 0))
 						.IsEnabled(this, &FTrackEditorEdModeToolkit::CanAddpoint)
 						]
 				]
@@ -85,7 +83,7 @@ void FTrackEditorEdModeToolkit::Init(const TSharedPtr<IToolkitHost>& InitToolkit
 				[
 					SNew(SButton)
 					.Text(FText::FromString("Add -X"))
-				.OnClicked(this, &FTrackEditorEdModeToolkit::OnAddPoint, FVector(-factor, 0, 0))
+				.OnClicked(this, &FTrackEditorEdModeToolkit::OnAddPoint, FVector(-1, 0, 0))
 				.IsEnabled(this, &FTrackEditorEdModeToolkit::CanAddpoint)
 				]
 			+ SVerticalBox::Slot()
@@ -122,7 +120,6 @@ FReply FTrackEditorEdModeToolkit::SpawnPoint()
 	FVector newPoint{ 0,0,0 };
 	FRotator rotation{ 0,0,0 };
 	FActorSpawnParameters spawnInfo;
-	spawnInfo.Name = "BaseCellPoint";
 	GEditor->GetEditorWorldContext().World()->SpawnActor<ACellPoint>(newPoint, rotation, spawnInfo);
 	return FReply::Handled();
 }

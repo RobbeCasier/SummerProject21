@@ -1,14 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Rail.h"
-#include "ProjectS21/Grid/CellPoint.h"
+#include "RailStatic.h"
 #include "ProjectS21/Minecart/Minecart.h"
-#include "GameFramework/FloatingPawnMovement.h"
 
-ARail::ARail()
+ARailStatic::ARailStatic()
 {
-	const ConstructorHelpers::FObjectFinder<UStaticMesh> mesh(TEXT("/Game/ProjectS21Assets/Rails/SM_Rail"));
+	const ConstructorHelpers::FObjectFinder<UStaticMesh> mesh(TEXT("/Game/ProjectS21Assets/Rails/SM_Rail_Static"));
 	mpMesh->SetStaticMesh(mesh.Object);
 
 	UArrowComponent* newArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Forward"));
@@ -23,16 +21,10 @@ ARail::ARail()
 	maDirections.Add(newArrow);
 	newArrow->SetupAttachment(RootComponent);
 
-	UFloatingPawnMovement* movement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("PawnMovement"));
-	UGridMovement* gridMovement = CreateDefaultSubobject<UGridMovement>(TEXT("GridMovementComponent"));
-	gridMovement->SetMovementComponent(movement);
-	AddOwnedComponent(movement);
-	AddOwnedComponent(gridMovement);
-
 	mType = Type::STRAIGHT;
 }
 
-void ARail::BeginPlay()
+void ARailStatic::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -43,14 +35,21 @@ void ARail::BeginPlay()
 
 	SetSplinePoint(0, backward);
 	SetSplinePoint(1, forward);
+
+	if (mIsStart)
+	{
+		AMinecart* pMinecart = GetWorld()->SpawnActor<AMinecart>(FActorSpawnParameters());
+		pMinecart->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+		pMinecart->SetRail(this);
+	}
 }
 
-void ARail::Tick(float DeltaTime)
+void ARailStatic::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-FVector ARail::GetNextDirection(const FVector& direction)
+FVector ARailStatic::GetNextDirection(const FVector& direction)
 {
 	auto arrow = maDirections.FindByPredicate([direction](UArrowComponent* comp)
 		{
@@ -60,7 +59,7 @@ FVector ARail::GetNextDirection(const FVector& direction)
 	return (*arrow)->GetForwardVector();
 }
 
-USplineComponent* ARail::GetTrack(const FVector& direction)
+USplineComponent* ARailStatic::GetTrack(const FVector& direction)
 {
 	FVector startPoint;
 	startPoint = GetActorLocation() - (direction * 100.f);

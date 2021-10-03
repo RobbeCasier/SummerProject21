@@ -20,7 +20,7 @@ struct HPS21PointProxy : public HHitProxy
 	int mIndex;
 };
 
-class UCellComponent;
+class ACellPoint;
 
 class FTrackEditorEdMode : public FEdMode
 {
@@ -47,4 +47,7 @@ public:
 	TWeakObjectPtr<AActor> currentSelectedTarget;
 	int currentSelectedIndex = -1;
 
+private:
+	void FindAndConnectExistingNodes(ACellPoint* actor);
+	float mCellPointOffset = 200.f;
 };

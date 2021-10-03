@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/SceneComponent.h"
+#include "Containers/Map.h"
+#include "Materials/Material.h"
 #include "CellPoint.generated.h"
 
 UCLASS()
@@ -26,13 +28,20 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void Update();
+	void Select();
+	void Deselect();
+
+	ACellPoint* GetNeighbour(const FVector& direction);
 
 	UPROPERTY(Editanywhere, Category = "Points")
-	TArray<ACellPoint*> maNeighbours;
+	TMap<FVector, ACellPoint*> maNeighbours;
 
 	UPROPERTY(Editanywhere, Category = "Grid Actor")
 		UClass* mpSpawnClass;
 
 private:
 	UClass* mpPreviousSpawnClass;
+
+	UStaticMeshComponent* mpSelectionPlane;
+	UMaterialInstance* mpSelectionMat;
 };

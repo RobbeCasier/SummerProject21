@@ -60,17 +60,19 @@ void FTrackEditorEdMode::Render(const FSceneView* View, FViewport* Viewport, FPr
 		if (actor)
 		{
 			FVector actorLoc = actor->GetActorLocation();
-			for (int i = 0; i < actor->maNeighbours.Num(); ++i)
+			TArray<ACellPoint*> neighbours;
+			actor->maNeighbours.GenerateValueArray(neighbours);
+			for (auto i = 0; i < actor->maNeighbours.Num(); ++i)
 			{
-				if (actor->maNeighbours[i] == nullptr)
+				ACellPoint* neighbour = neighbours[i];
+				if (neighbour == nullptr)
 					continue;
-
 				bool bSelected = (actor == currentSelectedTarget);
 				const FColor& color = bSelected ? selectedColor : normalColor;
 				// set hit proxy and draw
 				PDI->SetHitProxy(new HPS21PointProxy(actor, i));
-				PDI->DrawPoint(actor->maNeighbours[i]->GetActorLocation(), color, 25.f, SDPG_Foreground);
-				PDI->DrawLine(actor->maNeighbours[i]->GetActorLocation(), actorLoc, color, SDPG_Foreground);
+				PDI->DrawPoint(neighbour->GetActorLocation(), color, 25.f, SDPG_Foreground);
+				PDI->DrawLine(neighbour->GetActorLocation(), actorLoc, color, SDPG_Foreground);
 				PDI->SetHitProxy(NULL);
 			}
 		}
@@ -117,20 +119,40 @@ ACellPoint* GetSelectedTargetPointActor()
 	return nullptr;
 }
 
-bool ValidConnection(ACellPoint* actor, const FVector& nextLocation)
+bool ValidConnection(ACellPoint* actor, const FVector& direction)
 {
-	if (actor->maNeighbours.FindByPredicate(
-		[actor, nextLocation](ACellPoint* connectedActor)
-		{
-			auto location = connectedActor->GetActorLocation() + nextLocation;
-			return actor->GetActorLocation() == location;
-		}
-	))
-	{
-		return true;
-	}
-		return false;
+	return (actor->maNeighbours.Find(direction) != nullptr);
 }
+
+void FTrackEditorEdMode::FindAndConnectExistingNodes(ACellPoint* actor)
+{
+	TArray<FVector> directions;
+	directions.Add({ 1,0,0 });
+	directions.Add({ -1,0,0 });
+	directions.Add({ 0,1,0 });
+	directions.Add({ 0,-1,0 });
+
+	for (size_t i = 0; i < directions.Num(); i++)
+	{
+		if (!actor->maNeighbours.Contains(directions[i]))
+		{
+			for (TObjectIterator<ACellPoint> it; it; ++it)
+			{
+				ACellPoint* worldActor = (*it);
+				if (worldActor && worldActor != actor)
+				{
+					FVector newLocation = actor->GetActorLocation() + (directions[i] * mCellPointOffset);
+					if (worldActor->GetActorLocation().Equals(newLocation))
+					{
+						actor->maNeighbours.Add(directions[i], worldActor);
+						worldActor->maNeighbours.Add(directions[i] * -1.f, actor);
+					}
+				}
+			}
+		}
+	}
+}
+
 void FTrackEditorEdMode::AddPoint(const FVector& nextLocation)
 {
 	ACellPoint* actor = GetSelectedTargetPointActor();
@@ -140,8 +162,8 @@ void FTrackEditorEdMode::AddPoint(const FVector& nextLocation)
 			//return;
 		const FScopedTransaction Transaction(FText::FromString("Add Point"));
 
-
-		FVector newLocation = actor->GetActorLocation() + nextLocation;
+		const float offset = 200.f;
+		FVector newLocation = actor->GetActorLocation() + (nextLocation * offset);
 		// add new point, slightly in front of camera
 		/*FEditorViewportClient* client = (FEditorViewportClient*)GEditor->GetActiveViewport()->GetClient();
 		FVector newPoint = client->GetViewLocation() + client->GetViewRotation().Vector() * 50.f;*/
@@ -151,10 +173,11 @@ void FTrackEditorEdMode::AddPoint(const FVector& nextLocation)
 		FRotator rotation{ 0,0,0 };
 		FActorSpawnParameters spawnInfo;
 		ACellPoint* newActor = GEditor->GetEditorWorldContext().World()->SpawnActor<ACellPoint>(newLocation, rotation, spawnInfo);
-
+		newActor->Modify();
 		//set neighbours
-		actor->maNeighbours.Add(newActor);
-		newActor->maNeighbours.Add(actor);
+		actor->maNeighbours.Add(nextLocation, newActor);
+		newActor->maNeighbours.Add(nextLocation * -1.f, actor);
+		FindAndConnectExistingNodes(newActor);
 		// auto select this new point
 		SelectPoint(newActor);
 	}

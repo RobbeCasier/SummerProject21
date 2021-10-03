@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "BaseRail.h"
-#include "Rail.generated.h"
+#include "CurveRail.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class PROJECTS21_API ARail : public ABaseRail
+class PROJECTS21_API ACurveRail : public ABaseRail
 {
 	GENERATED_BODY()
 	
 public:
-	ARail();
+	ACurveRail();
 
 protected:
 	// Called when the game starts or when spawned
@@ -24,6 +24,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual FVector GetNextDirection(const FVector& direction) override;
+	virtual FVector GetNextDirection(const FVector& direction);
 	virtual USplineComponent* GetTrack(const FVector& direction) override;
 };
